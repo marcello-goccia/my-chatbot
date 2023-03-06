@@ -8,7 +8,6 @@ def tokenize_spacy(sentence):
 
     # Process the input sentence with spaCy
     doc = nlp(sentence)
-    # this comment just added now!!
 
     # Extract the tokens from the processed document
     tokens = [f"{token.text} {token.pos_}" for token in doc]

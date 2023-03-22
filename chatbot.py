@@ -1,7 +1,7 @@
 import spacy
 from spacy import displacy
 
-dictionary = set()
+nlp = spacy.load("en_core_web_sm")
 
 
 def split_to_sentences(doc):
@@ -15,7 +15,17 @@ question_keywords = ["what", "why", "who", "where", "how", "when"]
 
 unwanted_words = ['the', '?', '\n', '(', ')', '.', '/']
 
+
+def tokenize_spacy(sentence):
+    # Load the English language model
+
+    # Process the input sentence with spaCy
+    doc = nlp(sentence)
+    return doc
+
+
 def create_dictionary_of_words(filename):
+    dictionary = set()
     with open(filename, "r") as file1:
         all_lines = file1.readlines()
 
@@ -29,41 +39,24 @@ def create_dictionary_of_words(filename):
     with open("dictionary.txt", "w") as dictionary_file:
         dictionary_file.write('\n'.join(dictionary))
 
+    return dictionary
 
 
-def tokenize_spacy(sentence):
-
-    # Load the English language model
-    nlp = spacy.load("en_core_web_sm")
-
-    # Process the input sentence with spaCy
+def create_bag_of_words(sentence, dictionary):
     doc = nlp(sentence)
+    words = [token.lemma_ for token in doc]
+    bow = [0 for i in range(len(dictionary))]
+    for word in words:
+        # we need to find the index of our word in the dictionary
+        index = dictionary.index(word)
+        bow[index] += 1
+        #if word == words[i]
 
-    # sentences = split_to_sentences(doc)
-    # for sentence in sentences:
-    #     print(sentence.text, "is a question?", is_a_question(sentence))
-
-    # Extract the tokens from the processed document
-    # tokens = [f"TEXT: {token.text} PART-OF-SPEECH: {token.pos_} LEMMA: {token.lemma_} DEPENDENCY: {token.dep_}" for token in doc]
-
-    tokens = [token for token in doc]  # list comprehension
-    # for entity in doc.ents:
-    #     print(entity.text, entity.label_)
-
-    # # Print the output tokens
-    # print('\n'.join(tokens))
-    #
-    # displacy.serve(doc, style="dep", port=3000)
-
-    return tokens
-
-
-create_dictionary_of_words("all_words_example.txt")
 
 my_text = "What is your name?"
+dictionary = create_dictionary_of_words("all_words_example.txt")
 
-def create_bag_of_words(sentence):
-    pass
+bow = create_bag_of_words(my_text, dictionary)
 
 
 
